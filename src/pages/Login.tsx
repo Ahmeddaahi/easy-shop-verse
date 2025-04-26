@@ -2,9 +2,19 @@
 import { useAuth } from '../context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Login = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect to home page if user is already logged in
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
