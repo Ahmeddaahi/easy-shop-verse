@@ -1,32 +1,27 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { Button } from '@/components/ui/button';
 import ProductGrid from '../components/products/ProductGrid';
 import CategoryCard from '../components/categories/CategoryCard';
-
 const Index: React.FC = () => {
-  const { products, categories } = useShop();
-  
+  const {
+    products,
+    categories
+  } = useShop();
+
   // Get featured products for the hero section
   const featuredProducts = products.filter(product => product.featured);
-  
+
   // Get latest products for new arrivals section
-  const latestProducts = [...products]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 4);
-  
-  return (
-    <div className="flex flex-col min-h-screen">
+  const latestProducts = [...products].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 4);
+  return <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="bg-muted py-16 md:py-24">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-                Discover Amazing Products From Around the World
-              </h1>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Discover our Amazing Products in Labis Online</h1>
               <p className="text-lg text-muted-foreground">
                 Shop the latest products from trusted sellers. Quality guaranteed with our satisfaction promise.
               </p>
@@ -40,22 +35,10 @@ const Index: React.FC = () => {
               </div>
             </div>
             <div className="relative">
-              {featuredProducts.length > 0 && (
-                <div className="grid grid-cols-2 gap-4">
-                  <img 
-                    src={featuredProducts[0]?.imageUrl} 
-                    alt="Featured Product" 
-                    className="rounded-lg shadow-md object-cover aspect-square"
-                  />
-                  {featuredProducts[1] && (
-                    <img 
-                      src={featuredProducts[1]?.imageUrl} 
-                      alt="Featured Product" 
-                      className="rounded-lg shadow-md object-cover aspect-square mt-8"
-                    />
-                  )}
-                </div>
-              )}
+              {featuredProducts.length > 0 && <div className="grid grid-cols-2 gap-4">
+                  <img src={featuredProducts[0]?.imageUrl} alt="Featured Product" className="rounded-lg shadow-md object-cover aspect-square" />
+                  {featuredProducts[1] && <img src={featuredProducts[1]?.imageUrl} alt="Featured Product" className="rounded-lg shadow-md object-cover aspect-square mt-8" />}
+                </div>}
             </div>
           </div>
         </div>
@@ -72,9 +55,7 @@ const Index: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {categories.map(category => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
+            {categories.map(category => <CategoryCard key={category.id} category={category} />)}
           </div>
         </div>
       </section>
@@ -119,8 +100,6 @@ const Index: React.FC = () => {
           </Button>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
