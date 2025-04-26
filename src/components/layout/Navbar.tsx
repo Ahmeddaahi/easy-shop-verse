@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
@@ -14,9 +13,11 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar: React.FC = () => {
-  const { cart, user, logout, isAuthenticated } = useShop();
+  const { user: shopUser, cart, logout, isAuthenticated } = useShop();
+  const { user, profile, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const toggleMenu = () => {
@@ -90,7 +91,7 @@ const Navbar: React.FC = () => {
           </Link>
           
           {/* User Account */}
-          {isAuthenticated ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -103,12 +104,12 @@ const Navbar: React.FC = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/profile" className="w-full cursor-pointer">Profile</Link>
                 </DropdownMenuItem>
-                {user?.role === 'seller' && (
+                {profile?.role === 'seller' && (
                   <DropdownMenuItem asChild>
                     <Link to="/seller/dashboard" className="w-full cursor-pointer">Seller Dashboard</Link>
                   </DropdownMenuItem>
                 )}
-                {user?.role === 'admin' && (
+                {profile?.role === 'admin' && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin/dashboard" className="w-full cursor-pointer">Admin Dashboard</Link>
                   </DropdownMenuItem>
@@ -117,7 +118,7 @@ const Navbar: React.FC = () => {
                   <Link to="/orders" className="w-full cursor-pointer">My Orders</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
