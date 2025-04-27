@@ -55,9 +55,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      // Get the current URL for the redirect
+      const { origin } = window.location;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: `${origin}/login` // Explicitly set the redirect back to your login page
+        }
       });
+      
       if (error) throw error;
     } catch (error) {
       toast.error('Error signing in with Google');
