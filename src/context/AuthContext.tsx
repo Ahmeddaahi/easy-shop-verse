@@ -10,6 +10,9 @@ interface AuthContextType {
   user: User | null;
   profile: any | null;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -68,6 +71,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Signed in successfully');
+      navigate('/');
+    } catch (error: any) {
+      toast.error(error.message || 'Error signing in with email');
+      console.error('Error:', error);
+    }
+  };
+
+  const signUpWithEmail = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Please check your email to verify your account');
+    } catch (error: any) {
+      toast.error(error.message || 'Error signing up with email');
+      console.error('Error:', error);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      
+      if (error) throw error;
+      
+      toast.success('Password reset link sent to your email');
+    } catch (error: any) {
+      toast.error(error.message || 'Error sending password reset email');
+      console.error('Error:', error);
+    }
+  };
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -85,6 +134,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       profile,
       signInWithGoogle,
+      signInWithEmail,
+      signUpWithEmail,
+      resetPassword,
       signOut,
       loading
     }}>
