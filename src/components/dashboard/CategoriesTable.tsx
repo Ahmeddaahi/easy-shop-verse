@@ -8,19 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit } from 'lucide-react';
+import { Edit, Trash } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-}
+import { Category, Product } from '@/types';
 
 interface CategoriesTableProps {
   categories: Category[];
-  products: any[];
+  products: Product[];
 }
 
 export const CategoriesTable = ({ categories, products }: CategoriesTableProps) => {

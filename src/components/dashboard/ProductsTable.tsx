@@ -10,16 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Check, Edit } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface Product {
-  id: string;
-  name: string;
-  seller: string;
-  category: string;
-  price: number;
-  featured: boolean;
-  imageUrl: string;
-}
+import { Product } from '@/types';
 
 interface ProductsTableProps {
   products: Product[];
