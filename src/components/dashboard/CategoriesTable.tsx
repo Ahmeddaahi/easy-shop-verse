@@ -21,7 +21,7 @@ interface CategoriesTableProps {
 }
 
 export const CategoriesTable = ({ categories, products }: CategoriesTableProps) => {
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDeleteCategory = async (categoryId: string, categoryName: string) => {
@@ -29,7 +29,7 @@ export const CategoriesTable = ({ categories, products }: CategoriesTableProps) 
     const associatedProducts = products.filter(p => p.category === categoryName);
     
     if (associatedProducts.length > 0) {
-      toast({
+      uiToast({
         title: "Cannot delete category",
         description: `This category has ${associatedProducts.length} associated products. Remove them first.`,
         variant: "destructive"
@@ -40,15 +40,15 @@ export const CategoriesTable = ({ categories, products }: CategoriesTableProps) 
     try {
       setDeletingId(categoryId);
       
-      // Delete the category from Supabase
+      // Delete the category from products table where it's used as a text value
       const { error } = await supabase
-        .from('categories')
+        .from('products')
         .delete()
         .eq('id', categoryId);
       
       if (error) throw error;
       
-      toast({
+      uiToast({
         title: "Category deleted",
         description: `${categoryName} has been deleted successfully.`,
       });
@@ -60,7 +60,7 @@ export const CategoriesTable = ({ categories, products }: CategoriesTableProps) 
       }, 1000);
     } catch (error) {
       console.error('Error deleting category:', error);
-      toast({
+      uiToast({
         title: "Error",
         description: "Failed to delete category. Please try again.",
         variant: "destructive"
@@ -106,7 +106,7 @@ export const CategoriesTable = ({ categories, products }: CategoriesTableProps) 
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    onClick={() => toast({
+                    onClick={() => uiToast({
                       title: "Edit category",
                       description: `Edit ${category.name}`
                     })}

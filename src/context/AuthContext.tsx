@@ -50,7 +50,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => {
+            setProfile(data);
+            setLoading(false);
+          });
+      } else {
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -58,8 +71,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      // Using signInWithOAuth without specifying a redirectTo URL
-      // This will use the Site URL configured in Supabase
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       });
@@ -121,10 +132,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      toast.success('Logged out successfully');
+      setUser(null);
+      setSession(null);
+      setProfile(null);
       navigate('/');
-    } catch (error) {
-      toast.error('Error signing out');
-      console.error('Error:', error);
+    } catch (error: any) {
+      toast.error(error.message || 'Error signing out');
+      console.error('Error signing out:', error);
     }
   };
 
