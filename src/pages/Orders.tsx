@@ -22,22 +22,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface Order {
-  id: string;
-  created_at: string;
-  status: string;
-  total_amount: number;
-  user_id: string;
-}
-
-interface OrderItem {
-  id: string;
-  order_id: string;
-  product_id: string;
-  quantity: number;
-  price: number;
-}
+import { Order } from '@/types';
 
 const Orders = () => {
   const { user, loading } = useAuth();
@@ -72,7 +57,24 @@ const Orders = () => {
       
       if (error) throw error;
       
-      setOrders(data || []);
+      if (data) {
+        // Map database fields to our Order interface
+        const formattedOrders = data.map(order => ({
+          id: order.id,
+          userId: order.user_id,
+          user_id: order.user_id,
+          status: order.status,
+          total: order.total,
+          items: [], // Will be populated when viewing order details
+          createdAt: order.created_at,
+          created_at: order.created_at,
+          updated_at: order.updated_at,
+          shipping_address: order.shipping_address
+        }));
+        setOrders(formattedOrders);
+      } else {
+        setOrders([]);
+      }
     } catch (error: any) {
       console.error('Error fetching orders:', error);
       toast({
@@ -165,10 +167,10 @@ const Orders = () => {
                     <TableCell className="font-medium">
                       {order.id.substring(0, 8)}...
                     </TableCell>
-                    <TableCell>{formatDate(order.created_at)}</TableCell>
+                    <TableCell>{formatDate(order.createdAt || order.created_at || '')}</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
                     <TableCell className="text-right">
-                      {formatCurrency(order.total_amount)}
+                      {formatCurrency(order.total)}
                     </TableCell>
                     <TableCell>
                       <Button

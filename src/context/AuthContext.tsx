@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -48,6 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Current session:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -130,12 +132,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      console.log("Signing out user");
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      toast.success('Logged out successfully');
+      
       setUser(null);
       setSession(null);
       setProfile(null);
+      
+      toast.success('Logged out successfully');
       navigate('/');
     } catch (error: any) {
       toast.error(error.message || 'Error signing out');

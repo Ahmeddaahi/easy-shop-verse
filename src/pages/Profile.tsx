@@ -58,6 +58,16 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to log out. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="container flex items-center justify-center min-h-[70vh]">
@@ -98,7 +108,12 @@ const Profile = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button variant="destructive" className="w-full" onClick={() => signOut()}>
+              <Button 
+                variant="destructive" 
+                className="w-full" 
+                onClick={handleLogout} 
+                data-testid="logout-button"
+              >
                 Log Out
               </Button>
             </CardFooter>

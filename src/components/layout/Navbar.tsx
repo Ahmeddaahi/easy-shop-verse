@@ -28,6 +28,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     await signOut();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -119,7 +120,11 @@ const Navbar: React.FC = () => {
                 
                 <DropdownMenuSeparator />
                 
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer flex items-center text-red-600 focus:text-red-600">
+                <DropdownMenuItem 
+                  onClick={handleLogout} 
+                  className="cursor-pointer flex items-center text-red-600 focus:text-red-600"
+                  data-testid="logout-dropdown"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Logout</span>
                 </DropdownMenuItem>
@@ -176,11 +181,9 @@ const Navbar: React.FC = () => {
                 </Link>
                 
                 <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
+                  onClick={handleLogout}
                   className="font-medium py-2 transition-colors text-red-600 hover:text-red-700 flex items-center text-left"
+                  data-testid="logout-mobile"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout

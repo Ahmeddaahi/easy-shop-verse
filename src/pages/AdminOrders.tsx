@@ -16,14 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-
-interface Order {
-  id: string;
-  created_at: string;
-  status: string;
-  total_amount: number;
-  user_id: string;
-}
+import { Order } from '@/types';
 
 const AdminOrders: React.FC = () => {
   const navigate = useNavigate();
@@ -56,7 +49,24 @@ const AdminOrders: React.FC = () => {
         
       if (error) throw error;
       
-      setOrders(data || []);
+      if (data) {
+        // Map database fields to our Order interface
+        const formattedOrders = data.map(order => ({
+          id: order.id,
+          userId: order.user_id,
+          user_id: order.user_id,
+          status: order.status,
+          total: order.total,
+          items: [], // Will be populated when viewing order details
+          createdAt: order.created_at,
+          created_at: order.created_at,
+          updated_at: order.updated_at,
+          shipping_address: order.shipping_address
+        }));
+        setOrders(formattedOrders);
+      } else {
+        setOrders([]);
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -148,10 +158,10 @@ const AdminOrders: React.FC = () => {
                       <TableCell className="font-medium">
                         {order.id.substring(0, 8)}...
                       </TableCell>
-                      <TableCell>{formatDate(order.created_at)}</TableCell>
-                      <TableCell>{order.user_id.substring(0, 8)}...</TableCell>
+                      <TableCell>{formatDate(order.created_at || order.createdAt || '')}</TableCell>
+                      <TableCell>{(order.user_id || order.userId || '').substring(0, 8)}...</TableCell>
                       <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(order.total_amount)}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(order.total)}</TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="outline"

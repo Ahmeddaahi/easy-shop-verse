@@ -37,6 +37,10 @@ export interface Order {
   userId: string;
   items: CartItem[];
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  totalAmount: number;
+  total: number; // Changed from total_amount to total
   createdAt: string;
+  updated_at?: string;
+  shipping_address?: any;
+  user_id?: string; // Added to match database field
+  created_at?: string; // Added to match database field
 }

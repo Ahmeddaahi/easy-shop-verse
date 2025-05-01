@@ -23,15 +23,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface Order {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  status: string;
-  total_amount: number;
-  user_id: string;
-}
+import { Order } from '@/types';
 
 interface OrderItem {
   id: string;
@@ -89,7 +81,21 @@ const OrderDetail = () => {
         return;
       }
       
-      setOrder(orderData);
+      // Map database fields to our Order interface
+      const formattedOrder: Order = {
+        id: orderData.id,
+        userId: orderData.user_id,
+        user_id: orderData.user_id,
+        status: orderData.status,
+        total: orderData.total,
+        items: [], // Will be populated below
+        createdAt: orderData.created_at,
+        created_at: orderData.created_at,
+        updated_at: orderData.updated_at,
+        shipping_address: orderData.shipping_address
+      };
+      
+      setOrder(formattedOrder);
       
       // Fetch order items
       const { data: itemsData, error: itemsError } = await supabase
@@ -184,19 +190,21 @@ const OrderDetail = () => {
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Date Placed</p>
-                <p className="font-medium">{formatDate(order.created_at)}</p>
+                <p className="font-medium">{formatDate(order.created_at || order.createdAt || '')}</p>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Last Updated</p>
-                <p className="font-medium">{formatDate(order.updated_at)}</p>
-              </div>
+              {order.updated_at && (
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Last Updated</p>
+                  <p className="font-medium">{formatDate(order.updated_at)}</p>
+                </div>
+              )}
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Status</p>
                 <div>{getStatusBadge(order.status)}</div>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Total Amount</p>
-                <p className="font-medium text-lg">{formatCurrency(order.total_amount)}</p>
+                <p className="font-medium text-lg">{formatCurrency(order.total)}</p>
               </div>
             </CardContent>
           </Card>
@@ -219,27 +227,35 @@ const OrderDetail = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orderItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">
-                        {item.product_id}
-                      </TableCell>
-                      <TableCell className="text-center">{item.quantity}</TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(item.price)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(item.price * item.quantity)}
+                  {orderItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                        No items found for this order
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    orderItems.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">
+                          {item.product_id}
+                        </TableCell>
+                        <TableCell className="text-center">{item.quantity}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(item.price)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(item.price * item.quantity)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
             <CardFooter className="flex justify-end">
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-xl font-bold">{formatCurrency(order.total_amount)}</p>
+                <p className="text-xl font-bold">{formatCurrency(order.total)}</p>
               </div>
             </CardFooter>
           </Card>
