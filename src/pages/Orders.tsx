@@ -20,7 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Loader2 } from 'lucide-react';
+import { Eye, Loader2, ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Order } from '@/types';
 
@@ -58,19 +58,25 @@ const Orders = () => {
       if (error) throw error;
       
       if (data) {
-        // Map database fields to our Order interface
-        const formattedOrders = data.map(order => ({
-          id: order.id,
-          userId: order.user_id,
-          user_id: order.user_id,
-          status: order.status,
-          total: order.total,
-          items: [], // Will be populated when viewing order details
-          createdAt: order.created_at,
-          created_at: order.created_at,
-          updated_at: order.updated_at,
-          shipping_address: order.shipping_address
-        }));
+        // Map database fields to our Order interface and ensure status is valid
+        const formattedOrders = data.map(order => {
+          const validStatus = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(order.status) 
+            ? order.status as Order['status']
+            : 'pending';
+            
+          return {
+            id: order.id,
+            userId: order.user_id,
+            user_id: order.user_id,
+            status: validStatus,
+            total: order.total,
+            items: [], // Will be populated when viewing order details
+            createdAt: order.created_at,
+            created_at: order.created_at,
+            updated_at: order.updated_at,
+            shipping_address: order.shipping_address
+          };
+        });
         setOrders(formattedOrders);
       } else {
         setOrders([]);
@@ -122,69 +128,76 @@ const Orders = () => {
 
   if (loading || isLoading) {
     return (
-      <div className="container flex items-center justify-center min-h-[70vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="container flex flex-col items-center justify-center min-h-[70vh] space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading your orders...</p>
       </div>
     );
   }
 
   return (
-    <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-6">My Orders</h1>
+    <div className="container py-12">
+      <h1 className="text-3xl font-semibold mb-8">My Orders</h1>
       
       {orders.length === 0 ? (
-        <Card>
+        <Card className="text-center py-10">
           <CardHeader>
-            <CardTitle>No Orders Yet</CardTitle>
-            <CardDescription>
-              You haven't placed any orders yet. Start shopping to see your orders here.
+            <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground/60 mb-2" />
+            <CardTitle className="text-xl">No Orders Yet</CardTitle>
+            <CardDescription className="text-base max-w-md mx-auto">
+              You haven't placed any orders yet. Browse our products and start shopping to see your orders here.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/shop')}>Go to Shop</Button>
+            <Button onClick={() => navigate('/shop')} size="lg" className="mt-2 font-medium">
+              Browse Products
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
+        <Card className="border-border/40 shadow-sm">
+          <CardHeader className="pb-4">
             <CardTitle>Order History</CardTitle>
-            <CardDescription>View and track your past orders</CardDescription>
+            <CardDescription>Track and manage your past orders</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">
-                      {order.id.substring(0, 8)}...
-                    </TableCell>
-                    <TableCell>{formatDate(order.createdAt || order.created_at || '')}</TableCell>
-                    <TableCell>{getStatusBadge(order.status)}</TableCell>
-                    <TableCell className="text-right">
-                      {formatCurrency(order.total)}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => navigate(`/orders/${order.id}`)}
-                      >
-                        <Eye size={16} className="mr-1" /> Details
-                      </Button>
-                    </TableCell>
+            <div className="rounded-md border border-border/60 overflow-hidden">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow className="hover:bg-muted/60">
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {orders.map((order) => (
+                    <TableRow key={order.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium">
+                        {order.id.substring(0, 8)}...
+                      </TableCell>
+                      <TableCell>{formatDate(order.createdAt || order.created_at || '')}</TableCell>
+                      <TableCell>{getStatusBadge(order.status)}</TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(order.total)}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate(`/orders/${order.id}`)}
+                          className="hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Eye size={16} className="mr-1" /> Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}

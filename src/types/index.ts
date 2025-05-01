@@ -36,11 +36,11 @@ export interface Order {
   id: string;
   userId: string;
   items: CartItem[];
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  total: number; // Changed from total_amount to total
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | string;
+  total: number;
   createdAt: string;
   updated_at?: string;
   shipping_address?: any;
-  user_id?: string; // Added to match database field
-  created_at?: string; // Added to match database field
+  user_id?: string;
+  created_at?: string;
 }

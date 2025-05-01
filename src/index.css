@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 172.5 66% 50.4%;
+    --primary: 222.2 47% 40%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 214 32% 97%;
+    --muted-foreground: 214 13% 46%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 216 34% 95%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 172.5 66% 50.4%;
+    --ring: 222.2 47% 40%;
 
     --radius: 0.5rem;
   }
@@ -46,7 +46,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 172.5 66% 50.4%;
+    --primary: 217 91% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -63,7 +63,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 172.5 66% 50.4%;
+    --ring: 224.3 76.3% 48%;
   }
 }
 
@@ -74,10 +74,19 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight text-foreground;
+  }
+  
+  p {
+    @apply leading-relaxed text-foreground;
   }
   
   .product-card {
-    @apply relative flex flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md;
+    @apply relative flex flex-col overflow-hidden rounded-xl border shadow-sm transition-all hover:shadow-md hover:translate-y-[-2px] duration-300;
   }
   
   .product-image {
@@ -89,7 +98,24 @@
   }
   
   .section-heading {
-    @apply scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0 sm:text-3xl;
+    @apply scroll-m-20 border-b border-border/40 pb-4 text-2xl font-semibold tracking-tight first:mt-0 sm:text-3xl mb-8;
   }
 }
 
+@layer components {
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-[1400px];
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:border-primary/30;
+  }
+  
+  .btn-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .link-hover {
+    @apply transition-colors duration-200 hover:text-primary;
+  }
+}

@@ -32,9 +32,9 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur border-b border-border/40 shadow-sm">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 md:gap-6">
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMenu}>
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -46,9 +46,13 @@ const Navbar: React.FC = () => {
           </Link>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm">
+          <nav className="hidden md:flex items-center gap-8 text-sm">
             {navLinks.map(link => (
-              <Link key={link.name} to={link.path} className="font-medium transition-colors hover:text-primary">
+              <Link
+                key={link.name}
+                to={link.path}
+                className="font-medium transition-colors hover:text-primary relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
+              >
                 {link.name}
               </Link>
             ))}
@@ -56,17 +60,21 @@ const Navbar: React.FC = () => {
         </div>
         
         {/* Search and Actions */}
-        <div className="flex items-center gap-2">
-          <form className="hidden md:flex items-center">
-            <Input type="search" placeholder="Search products..." className="h-9 w-[180px] lg:w-[280px]" />
-            <Button type="submit" variant="ghost" size="icon">
-              <Search size={18} />
+        <div className="flex items-center gap-4">
+          <form className="hidden md:flex items-center relative group">
+            <Input 
+              type="search" 
+              placeholder="Search products..." 
+              className="h-9 w-[180px] lg:w-[280px] pr-9 transition-all duration-300 border-muted focus:border-primary" 
+            />
+            <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
+              <Search size={18} className="text-muted-foreground group-focus-within:text-primary transition-colors" />
             </Button>
           </form>
           
           {/* Cart Link */}
           <Link to="/cart">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
               <ShoppingCart size={20} />
               {cartItemsCount > 0 && (
                 <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs">
@@ -80,23 +88,23 @@ const Navbar: React.FC = () => {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                   <User size={20} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-56 mt-1 rounded-xl border-border/60 shadow-lg backdrop-blur bg-background/95">
+                <DropdownMenuLabel className="font-semibold text-foreground">My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-border/40" />
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/profile" className="w-full cursor-pointer flex items-center">
+                  <Link to="/profile" className="w-full cursor-pointer flex items-center hover:bg-primary/5">
                     <UserCircle className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem asChild>
-                  <Link to="/orders" className="w-full cursor-pointer flex items-center">
+                  <Link to="/orders" className="w-full cursor-pointer flex items-center hover:bg-primary/5">
                     <Package className="mr-2 h-4 w-4" />
                     <span>My Orders</span>
                   </Link>
@@ -104,7 +112,7 @@ const Navbar: React.FC = () => {
                 
                 {profile?.role === 'seller' && (
                   <DropdownMenuItem asChild>
-                    <Link to="/seller/dashboard" className="w-full cursor-pointer">
+                    <Link to="/seller/dashboard" className="w-full cursor-pointer hover:bg-primary/5">
                       Seller Dashboard
                     </Link>
                   </DropdownMenuItem>
@@ -112,17 +120,17 @@ const Navbar: React.FC = () => {
                 
                 {profile?.role === 'admin' && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin/dashboard" className="w-full cursor-pointer">
+                    <Link to="/admin/dashboard" className="w-full cursor-pointer hover:bg-primary/5">
                       Admin Dashboard
                     </Link>
                   </DropdownMenuItem>
                 )}
                 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-border/40" />
                 
                 <DropdownMenuItem 
                   onClick={handleLogout} 
-                  className="cursor-pointer flex items-center text-red-600 focus:text-red-600"
+                  className="cursor-pointer flex items-center text-red-600 hover:bg-red-50 focus:bg-red-50"
                   data-testid="logout-dropdown"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -132,7 +140,7 @@ const Navbar: React.FC = () => {
             </DropdownMenu>
           ) : (
             <Link to="/login">
-              <Button variant="outline" size="sm">Login</Button>
+              <Button variant="secondary" size="sm" className="font-medium">Login</Button>
             </Link>
           )}
         </div>
@@ -140,31 +148,33 @@ const Navbar: React.FC = () => {
       
       {/* Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b p-4 animate-fade-in">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background/95 backdrop-blur-md border-b shadow-md p-4 animate-fade-in z-50">
           <div className="flex flex-col gap-4">
-            <form className="flex items-center mb-2">
-              <Input type="search" placeholder="Search products..." className="h-9 w-full" />
-              <Button type="submit" variant="ghost" size="icon">
+            <form className="flex items-center mb-4 relative">
+              <Input type="search" placeholder="Search products..." className="h-10 w-full pr-10" />
+              <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                 <Search size={18} />
               </Button>
             </form>
             
-            {navLinks.map(link => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className="font-medium py-2 transition-colors hover:text-primary"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
+            <div className="flex flex-col space-y-1">
+              {navLinks.map(link => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className="font-medium py-2.5 transition-colors hover:text-primary hover:bg-primary/5 px-2 rounded-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
             
             {user && (
-              <>
+              <div className="border-t border-border/30 mt-2 pt-2 space-y-1">
                 <Link
                   to="/profile"
-                  className="font-medium py-2 transition-colors hover:text-primary flex items-center"
+                  className="font-medium py-2.5 transition-colors hover:text-primary hover:bg-primary/5 flex items-center px-2 rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <UserCircle className="mr-2 h-4 w-4" />
@@ -173,7 +183,7 @@ const Navbar: React.FC = () => {
                 
                 <Link
                   to="/orders"
-                  className="font-medium py-2 transition-colors hover:text-primary flex items-center"
+                  className="font-medium py-2.5 transition-colors hover:text-primary hover:bg-primary/5 flex items-center px-2 rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Package className="mr-2 h-4 w-4" />
@@ -182,13 +192,13 @@ const Navbar: React.FC = () => {
                 
                 <button
                   onClick={handleLogout}
-                  className="font-medium py-2 transition-colors text-red-600 hover:text-red-700 flex items-center text-left"
+                  className="w-full text-left font-medium py-2.5 transition-colors text-red-600 hover:text-red-700 hover:bg-red-50/80 flex items-center px-2 rounded-md"
                   data-testid="logout-mobile"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
