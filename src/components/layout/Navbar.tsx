@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
@@ -27,8 +26,12 @@ const Navbar: React.FC = () => {
   ];
 
   const handleLogout = async () => {
-    await signOut();
-    setIsMenuOpen(false);
+    try {
+      await signOut();
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -109,14 +112,6 @@ const Navbar: React.FC = () => {
                     <span>My Orders</span>
                   </Link>
                 </DropdownMenuItem>
-                
-                {profile?.role === 'seller' && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/seller/dashboard" className="w-full cursor-pointer hover:bg-primary/5">
-                      Seller Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                )}
                 
                 {profile?.role === 'admin' && (
                   <DropdownMenuItem asChild>

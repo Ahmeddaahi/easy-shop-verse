@@ -28,6 +28,9 @@ const Profile = () => {
     if (profile) {
       setName(profile.name || '');
       setEmail(profile.email || '');
+    } else if (user) {
+      // If profile not loaded but we have user data
+      setEmail(user.email || '');
     }
   }, [loading, user, profile, navigate]);
 
@@ -61,7 +64,6 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Failed to log out. Please try again.');
@@ -87,7 +89,7 @@ const Profile = () => {
               <Avatar className="h-24 w-24 mx-auto">
                 <AvatarImage src={profile?.avatar_url} />
                 <AvatarFallback className="text-3xl">
-                  {profile?.name?.charAt(0) || user?.email?.charAt(0).toUpperCase() || 'U'}
+                  {profile?.name?.charAt(0) || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <CardTitle className="mt-2">{profile?.name || 'User'}</CardTitle>

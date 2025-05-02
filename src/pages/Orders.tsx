@@ -1,3 +1,4 @@
+
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -48,6 +49,7 @@ const Orders = () => {
     setIsLoading(true);
     
     try {
+      console.log("Fetching orders for user:", user.id);
       const { data, error } = await supabase
         .from('orders')
         .select('*')
@@ -55,6 +57,8 @@ const Orders = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
+      
+      console.log("Orders data:", data);
       
       if (data) {
         // Map database fields to our Order interface
