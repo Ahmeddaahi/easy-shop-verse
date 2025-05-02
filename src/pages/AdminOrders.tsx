@@ -51,7 +51,7 @@ const AdminOrders: React.FC = () => {
       
       if (data) {
         // Map database fields to our Order interface
-        const formattedOrders = data.map(order => ({
+        const formattedOrders: Order[] = data.map(order => ({
           id: order.id,
           userId: order.user_id,
           user_id: order.user_id,

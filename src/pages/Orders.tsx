@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -58,25 +57,19 @@ const Orders = () => {
       if (error) throw error;
       
       if (data) {
-        // Map database fields to our Order interface and ensure status is valid
-        const formattedOrders = data.map(order => {
-          const validStatus = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(order.status) 
-            ? order.status as Order['status']
-            : 'pending';
-            
-          return {
-            id: order.id,
-            userId: order.user_id,
-            user_id: order.user_id,
-            status: validStatus,
-            total: order.total,
-            items: [], // Will be populated when viewing order details
-            createdAt: order.created_at,
-            created_at: order.created_at,
-            updated_at: order.updated_at,
-            shipping_address: order.shipping_address
-          };
-        });
+        // Map database fields to our Order interface
+        const formattedOrders: Order[] = data.map(order => ({
+          id: order.id,
+          userId: order.user_id,
+          user_id: order.user_id,
+          status: order.status,
+          total: order.total,
+          items: [], // Will be populated when viewing order details
+          createdAt: order.created_at,
+          created_at: order.created_at,
+          updated_at: order.updated_at,
+          shipping_address: order.shipping_address
+        }));
         setOrders(formattedOrders);
       } else {
         setOrders([]);
