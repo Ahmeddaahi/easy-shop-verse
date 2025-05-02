@@ -50,9 +50,25 @@ const Profile = () => {
         })
         .eq('id', user.id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
+      }
       
       toast.success('Profile updated successfully');
+      
+      // Refresh the profile data - let the AuthContext know there was a change
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+        
+      if (data) {
+        // We can't update the profile state directly from here
+        // But forcing a reload will trigger the AuthContext to refresh
+        window.location.reload();
+      }
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast.error(error.message || 'Error updating profile');

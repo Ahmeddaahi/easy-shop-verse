@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Trash, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 const Cart: React.FC = () => {
   const { cart, updateCartItemQuantity, removeFromCart, clearCart, getCartTotal } = useShop();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const handleCheckout = () => {
@@ -17,8 +18,14 @@ const Cart: React.FC = () => {
       return;
     }
     
-    // In a real app, navigate to checkout page
-    // For this demo, simulate successful checkout
+    // Check if user is logged in
+    if (!user) {
+      toast.error("Please log in to complete your order");
+      navigate('/login');
+      return;
+    }
+    
+    // Continue with checkout if user is authenticated
     toast.success("Order placed successfully!");
     clearCart();
     navigate('/');
@@ -187,7 +194,7 @@ const Cart: React.FC = () => {
             </div>
             
             <Button className="w-full" onClick={handleCheckout}>
-              Checkout
+              {user ? 'Checkout' : 'Sign in to Checkout'}
             </Button>
             
             <div className="text-xs text-center text-muted-foreground">

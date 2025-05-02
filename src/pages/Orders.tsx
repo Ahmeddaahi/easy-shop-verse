@@ -33,12 +33,11 @@ const Orders = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login');
-      return;
-    }
-
-    if (user) {
+    if (!loading) {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
       fetchOrders();
     }
   }, [loading, user, navigate]);
@@ -56,19 +55,22 @@ const Orders = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching orders:', error);
+        throw error;
+      }
       
       console.log("Orders data:", data);
       
-      if (data) {
+      if (data && data.length > 0) {
         // Map database fields to our Order interface
-        const formattedOrders: Order[] = data.map(order => ({
+        const formattedOrders = data.map(order => ({
           id: order.id,
           userId: order.user_id,
           user_id: order.user_id,
           status: order.status,
           total: order.total,
-          items: [], // Will be populated when viewing order details
+          items: [],
           createdAt: order.created_at,
           created_at: order.created_at,
           updated_at: order.updated_at,
